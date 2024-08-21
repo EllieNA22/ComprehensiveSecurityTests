@@ -1,0 +1,694 @@
+
+
+**Security Testing**
+
+| No. | Test Case | Description | Manual Example |
+|-----|-----------|-------------|----------------|
+| 1   | **Authentication Vulnerabilities** | Test for vulnerabilities in authentication mechanisms. | **Example:** Try logging in with SQL injection payloads (e.g., `admin' OR '1'='1`) to see if the system is vulnerable to SQL injection. |
+2. Test Login Form:
+
+Navigate: Go to the login page of the web application.
+Enter Payload:
+Username Field: admin' OR '1'='1
+Password Field: (leave blank)
+Submit Form: Click on the login button.
+3. Observe Results:
+
+If Vulnerable: If the login is successful or you gain access to a restricted area (e.g., admin panel), it indicates that the application is vulnerable to SQL injection.
+If Secure: The system should either deny access or properly handle the payload without granting unauthorized access.
+Additional Testing:
+**1. Error Messages:
+
+Check for Details: Observe if the application shows detailed error messages. Detailed errors can reveal underlying database queries or structure, which may be exploited.
+**2. Input Fields:
+
+Test Other Inputs: Apply SQL injection payloads in other input fields related to authentication, like search bars, user profile fields, or any other form where user input is processed.
+
+
+----------------------------------------------------------------------------
+| 2   | **Password Strength Requirements** | Verify that password strength requirements are enforced. | **Example:** Attempt to set a password that is too short or lacks complexity (e.g., `12345`), and ensure the system rejects it with a proper error message. |
+
+------------------------------------------------------------------------
+| 3   | **Brute Force Protection** | Test for protections against brute force attacks. | **Example:** Attempt multiple login attempts with incorrect passwords rapidly and check if the account is locked or a CAPTCHA is presented after a certain number of failed attempts. |
+---------------------------------------------------------------------------------------
+
+| 4   | **Session Management** | Ensure that session management is secure. | **Example:** Log in, then attempt to hijack the session by using another user’s session token. Verify that the system does not accept the token and properly manages sessions. |
+
+
+
+Steps to Perform the Test:
+1. Log In to the Application:
+
+Action: Use a valid user account to log in to the application. This will establish a session and generate a session token.
+2. Obtain the Session Token:
+
+Identify Token: After logging in, locate the session token. This might be stored in cookies, local storage, or sent as part of HTTP headers.
+Browser Developer Tools: Use browser developer tools (e.g., Chrome DevTools) to inspect cookies or local storage. For cookies:
+Go to the Application tab in Chrome DevTools.
+Check Cookies under Storage to find the session token.
+Example Cookie Name: Look for names like SESSIONID, AuthToken, or similar.
+3. Attempt Session Hijacking:
+
+Capture Token: Note the session token obtained from your session.
+Use Another User’s Token:
+Get Another Token: For testing, you might use a token from another user (if accessible) or simulate one by modifying the captured token.
+Replace Token: Use a tool like Postman or manually set the token in your browser’s developer tools to see if it’s accepted.
+4. Verify Session Management:
+
+Test with Own Token:
+Logout and Re-Login: Ensure that after logging out and logging back in, the previous token is invalidated.
+Access Protected Areas: Use the original session token (post-logout) to see if you can still access protected areas.
+Test with Captured Token:
+Attempt Access: Try to access the application using the captured token. The system should reject the token and deny access.
+5. Check Session Security Features:
+
+Session Expiry: Verify that sessions expire after a period of inactivity or when explicitly logged out.
+Secure Cookie Flags: Ensure cookies are set with secure flags (Secure, HttpOnly, SameSite) to protect against interception and cross-site scripting (XSS).
+Real-World Example:
+1. Example Application: Suppose you’re testing an online email service.
+
+2. Log In:
+
+Action: Log in with a user account to establish a session.
+3. Capture Session Token:
+
+Find Token: Use browser developer tools to find the session token in cookies.
+4. Attempt Hijacking:
+
+Simulate Token Usage:
+Scenario: If you can obtain a session token from another user (e.g., via a shared session or misconfigured settings), attempt to use it.
+Check Access: Use the captured token in a tool like Postman or modify the browser’s cookies to see if you can access the email service as the other user.
+5. Verify Results:
+
+Token Rejection: Ensure the application rejects the captured token and does not allow unauthorized access.
+Session Expiry and Security: Confirm that sessions expire appropriately and that cookies are secured with the correct flags.
+
+--------------------------------------------------------------------------------
+| 5   | **Data Encryption** | Verify that sensitive data is encrypted both in transit and at rest. | **Example:** Use a network monitoring tool to capture traffic between the client and server and check if sensitive data (e.g., login credentials) is transmitted over HTTPS. |
+1. Testing Encryption in Transit:
+
+Example Application: Suppose you’re testing an online banking application.
+Setup: Use Wireshark to capture network traffic while logging into the application and viewing account details.
+Verify: Ensure that the login credentials and account information are transmitted over HTTPS and not visible in plain text.
+2. Testing Encryption at Rest:
+
+Example Application: Suppose you’re testing a healthcare application that stores patient records.
+Access Storage: Check the database or file storage system where patient records are kept.
+Verify: Confirm that the patient records are encrypted and not stored in plain text.
+Summary:
+Encryption in Transit: Use network monitoring tools to ensure that sensitive data is transmitted over HTTPS.
+Encryption at Rest: Verify that stored sensitive data is encrypted using strong encryption methods.
+------------------------------------------------------------------------------
+
+
+| 6   | **Access Control** | Check if unauthorized access is properly restricted. | **Example:** Try to access admin-only pages or functionalities with a regular user account and ensure access is denied. |
+Testing Access Control
+Objective: Ensure that unauthorized users cannot access or perform actions restricted to higher privilege levels (e.g., admin functionalities).
+
+Steps to Perform the Test:
+1. Identify Restricted Areas:
+
+Locate: Find pages or functionalities that should be accessible only to users with specific roles, such as admin panels, configuration settings, or user management features.
+Examples: Admin dashboards, user management interfaces, or special settings pages.
+2. Log In with a Regular User Account:
+
+Setup: Use a regular user account (i.e., a non-admin or standard account) to test access control.
+Create or Use: If needed, create a standard user account or use an existing one.
+3. Attempt Unauthorized Access:
+
+Direct URL Access:
+Example URL: Suppose an admin-only page is located at https://example.com/admin/dashboard.
+Test: Log in with the regular user account and directly enter the URL in your browser.
+Functionality Testing:
+Example: Try accessing a restricted function such as user management. For instance, attempt to access https://example.com/admin/users with your regular user credentials.
+4. Verify the Outcome:
+
+Check Access Denied:
+Expected Result: The system should deny access and show an appropriate error message (e.g., "403 Forbidden" or "Access Denied").
+If Access is Granted: If the system allows access or displays sensitive information, it indicates a failure in access control.
+Real-World Example:
+Example Application: Suppose you’re testing an online e-commerce site with different user roles (e.g., regular users and admin).
+
+Identify Restricted Page:
+
+The admin panel URL might be https://example.com/admin.
+Test Regular User Access:
+
+Log In: Use a regular user account to log in.
+Direct Access Attempt: Enter the URL https://example.com/admin in your browser.
+Check Functionality Access: Attempt to perform actions that should be restricted, such as creating new admin users or viewing all orders.
+Verify Results:
+
+Access Denied: Confirm that the page or functionality is blocked and that the user sees an "Access Denied" message.
+Error Message: The system should clearly indicate that the user does not have sufficient permissions to access the requested resource.
+-----------------------------------------------------------------------------------------------
+
+
+| 7   | **Cross-Site Scripting (XSS)** | Test for XSS vulnerabilities. | **Example:** Inject a script tag (`<script>alert('XSS')</script>`) into input fields or URL parameters and verify if the script executes or is sanitized. |
+
+To test for Cross-Site Scripting (XSS) vulnerabilities, you'll check whether user inputs are properly sanitized and whether any malicious scripts can be executed in a web application. Here’s a practical, real-world example of how to test for XSS vulnerabilities:
+
+Testing for XSS Vulnerabilities
+Objective: Verify if the application properly handles and sanitizes input to prevent malicious scripts from executing.
+
+Steps to Perform the Test:
+1. Identify Input Points:
+
+Location: Find input fields or URL parameters where users can submit data. Common places include:
+Search bars
+Contact forms
+Comment sections
+User profiles
+Query parameters in URLs
+2. Inject Test Payload:
+
+Example Payload: Use a basic script payload to test XSS vulnerability. A simple test payload is:
+######################33
+<script>alert('XSS')</script>
+3. Perform the Test:
+
+Test in Input Fields:
+
+Navigate to a form or field on the target application (e.g., a comment box).
+Enter the payload <script>alert('XSS')</script> and submit the form.
+Test in URL Parameters:
+
+Append the payload to a URL parameter. For example, if the URL is https://example.com/profile?id=123, modify it to:
+#################
+https://example.com/profile?id=<script>alert('XSS')</script>
+Access this URL to see if the payload is executed.
+4. Verify the Outcome:
+
+Check for Script Execution:
+If Vulnerable: The payload will execute and show an alert box with the message 'XSS'. This indicates that the input is not properly sanitized.
+If Secured: The application should either display the payload as plain text or properly escape it, preventing any script execution.
+Real-World Example:
+Example Application: Suppose you’re testing a blog commenting system.
+
+Test Input Field:
+
+Go to the blog's comment section.
+Enter the payload <script>alert('XSS')</script> in the comment box.
+Submit the comment.
+Check Results:
+
+Vulnerable Scenario: If the alert box with 'XSS' appears, it means the comment field is executing your script. This demonstrates an XSS vulnerability.
+Secure Scenario: The comment will either be displayed as plain text (e.g., <script>alert('XSS')</script>) or sanitized to remove harmful parts.
+4. URL Parameter Testing:
+
+If the application has a feature that displays user comments based on a URL parameter (like a comment ID), modify the URL to include your payload:
+###################
+https://example.com/comments?id=<script>alert('XSS')</script>
+Access the URL and observe if the payload is executed or if it is displayed as plain text.
+---------------------------------------------------------------------------------------
+
+
+| 8   | **Cross-Site Request Forgery (CSRF)** | Verify the system's protection against CSRF attacks. | **Example:** Attempt to perform actions (e.g., changing account settings) using a CSRF attack by submitting a forged request from an external site and ensure that the action is blocked. |
+
+Testing for CSRF Protection
+Objective: Verify that the application properly protects against CSRF attacks.
+
+Practical Test Examples:
+Identify Actions to Test:
+
+Choose actions that modify user data or settings, such as changing account settings, updating profile information, or submitting forms.
+Create a CSRF Test Page:
+
+Set up an external HTML page that submits a request to the target application’s action endpoint. This page should attempt to perform the action on behalf of the user.
+#############################
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSRF Test</title>
+</head>
+<body>
+    <h1>CSRF Test Page</h1>
+    <form action="https://targetsite.com/update-settings" method="POST">
+        <input type="hidden" name="setting" value="newValue">
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
+Replace https://targetsite.com/update-settings with the URL of the action you are testing.
+Execute the CSRF Test:
+
+Host the above HTML file on an external server or local environment.
+Open the HTML file in a browser and click the "Submit" button.
+Verify Protection:
+
+Check Target Site: Ensure that the action (e.g., changing settings) is not performed on the target application.
+Expected Result: The target application should not process the request, indicating CSRF protection is in place.
+
+
+
+Steal Password!!!
+CSRF Exploitation Scenario:
+In a real CSRF attack, the attacker aims to trick users into performing actions without their consent. Here’s how it can work:
+
+Crafting the Attack:
+
+Example: Suppose the attacker wants to change the password of a user who is logged into a site. They might create a similar form that attempts to submit a request to change the user’s password:
+######
+<form action="https://targetsite.com/change-password" method="POST">
+    <input type="hidden" name="newPassword" value="newHackedPassword123">
+    <button type="submit">Change Password</button>
+</form>
+Tricking the User:
+
+Deceptive Page: The attacker could host this form on a page disguised as something benign or interesting. For example, it could be a fake survey, a quiz, or an invitation.
+
+User Clicks: When an authenticated user (logged into the target site) visits this page and clicks the "Submit" button, the request is sent to the target site with the user’s credentials (because they are logged in).
+
+Execution of Unauthorized Actions:
+
+Password Change: If the target site does not check whether the request is legitimate, it will process the request and change the user’s password to the attacker’s chosen value.
+Outcome: The attacker can then use the changed password to gain unauthorized access to the user’s account.
+
+-------------------------------------------------------------------
+| 9   | **Error Handling** | Ensure that error messages do not reveal sensitive information. | **Example:** Trigger error conditions (e.g., invalid SQL query) and check if error messages display detailed stack traces or database information. |
+
+Examples of Triggering Error Conditions:
+
+Testing Invalid SQL Query:
+
+SQL Injection Example: If there is a search form, enter a SQL injection payload like ' OR '1'='1 or ' UNION SELECT NULL, NULL --.
+Expected Result: Observe if the application generates an error and how it handles it.
+Testing Invalid File Upload:
+
+Malformed File: Attempt to upload a file with corrupted data or an unsupported file type.
+Expected Result: Check the response for detailed error messages.
+Testing Invalid Form Input:
+
+Invalid Data: Enter data that does not meet the expected format, such as letters in a field that expects numbers.
+Expected Result: Observe the error handling.
+3. Check Error Messages and Stack Traces:
+Inspect Error Messages: Ensure that the error messages displayed do not include detailed stack traces, SQL errors, or database schema information.
+Use Developer Tools: Open the browser’s developer tools to view network responses and console logs to see if any sensitive information is exposed.
+For Example:
+
+Trigger SQL Error: Use a payload that should cause a SQL error, such as a malformed SQL query.
+##############
+' OR '1'='1
+Review Response: Check the server response or the web page to see if it displays something like:
+##################
+SQL Error: Syntax error or access violation
+Instead of detailed information like:
+###############################
+SQL Error: Error in SQL query at line 42: SELECT * FROM users WHERE id = '' OR '1'='1'
+4. Evaluate Error Handling:
+Error Message Contents: Confirm that error messages are generic and do not expose internal application details.
+Logging: Ensure sensitive information is not logged in plain text on the server logs.
+
+
+
+--------------------------------------------------------------------------
+
+| 10  | **Clickjacking** | Test for vulnerabilities to clickjacking. | **Example:** Embed the target page in an iframe and try to interact with it from an external site to verify if the page can be manipulated via clickjacking. |
+Testing for Clickjacking Vulnerabilities
+Objective: Verify if the target page can be manipulated through clickjacking by embedding it in an iframe on an external site.
+
+Steps to Perform:
+
+Prepare the Test Environment:
+
+Target Page: Identify the page you want to test for clickjacking (e.g., a login page, settings page, etc.).
+External Site: Set up or use an existing site where you have control and can embed iframes. This could be a simple HTML page or a testing environment.
+Create an External HTML Page with an Iframe:
+
+Create HTML File: Create a new HTML file (e.g., test-clickjacking.html) with the following content to embed the target page:
+#####################################################
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clickjacking Test</title>
+    <style>
+        /* Set iframe size and position */
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Full viewport height */
+        }
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        /* Add a transparent overlay to simulate clickjacking */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 0, 0, 0.5); /* Semi-transparent red overlay */
+            pointer-events: none; /* Allows clicks to pass through to iframe */
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container">
+        <iframe src="https://targetpage.com"></iframe>
+        <div class="overlay"></div> <!-- Optional: Add an overlay to test clickjacking -->
+    </div>
+</body>
+</html>
+
+
+Note:Please replace the https://targetpage.com with the URL of the target page you want to test.
+Host and Access the HTML Page:
+
+Upload or Host the HTML File: Upload or host the HTML file on a web server or local server where you can access it via a browser.
+Test Interaction:
+
+Access Test Page: Open the hosted HTML page in a web browser.
+Attempt to Interact: Try interacting with the embedded iframe by clicking or performing actions on it through the overlay or other elements.
+Verify Clickjacking: Ensure that the target page cannot be manipulated unintentionally. For example, ensure you cannot submit a form or change settings on the target page through the overlay.
+Check HTTP Headers for Protection:
+
+Inspect Headers: Use browser Developer Tools or an online header checker to inspect the HTTP response headers of the target page.
+Verify Security Headers:
+X-Frame-Options: Should be set to DENY or SAMEORIGIN to prevent embedding in iframes.
+Content-Security-Policy (CSP): Should include a frame-ancestors directive to restrict which domains can embed the page in iframes (e.g., frame-ancestors 'self').
+Review Results and Remediate:
+
+If Vulnerable: If you can interact with or manipulate the target page via the iframe, it indicates a clickjacking vulnerability. Implement or ensure appropriate security headers are configured to prevent such attacks.
+If Protected: Confirm that the X-Frame-Options or Content-Security-Policy headers are properly set to prevent embedding.
+-------------------------------------------------------------------------------------------
+
+
+| 11  | **File Upload Security** | Check if file upload functionality is secure. | **Example:** Attempt to upload a file with an executable extension (e.g., `.php`) and ensure the system does not allow execution of such files. |
+
+Steps to Perform:
+
+Identify File Upload Points:
+
+Locate where file uploads are allowed in the application (e.g., profile picture upload, document upload, etc.).
+Prepare Test Files:
+
+Executable File: Create or obtain a file with an executable extension (e.g., .php, .exe, .bat). For instance, create a file named test.php with the following content:
+
+###############################
+<?php echo "This is a test"; ?>
+Non-Executable File: Prepare a non-executable file (e.g., .jpg, .pdf) to compare.
+Test File Upload with Executable Extension:
+
+Upload Executable File:
+
+Navigate to the file upload section of the application.
+Select and upload the file with the executable extension (e.g., test.php).
+Complete the upload process.
+Verify Upload Response:
+
+Expected Result: The system should reject the file with an executable extension. This can be indicated by an error message or the file being blocked from upload.
+Check System Behavior:
+
+File Execution Check:
+Access the Upload Directory: If possible, check the directory where files are uploaded on the server.
+Verify Execution Prevention: Ensure that files with executable extensions are either not present or cannot be executed. Attempt to access the file via a URL if the application serves uploaded files (e.g., https://example.com/uploads/test.php).
+Expected Result: Accessing the file should either return a 404 Not Found error or a response indicating that execution is not allowed.
+Test File Upload with Non-Executable Extension:
+
+Upload Non-Executable File:
+
+Upload a file with a non-executable extension (e.g., image.jpg, document.pdf).
+Verify that the file is successfully uploaded.
+Verify File Access:
+
+Expected Result: Ensure that non-executable files are uploaded successfully and can be accessed without issues, as long as they are within the scope of allowed file types.
+Review File Upload Validation:
+
+Check for Additional Security Measures:
+Ensure that the system has file type validation in place to only allow specific extensions.
+Verify that any executable content within non-executable files is properly handled (e.g., through sanitization or filtering).
+Check Application Logs (Optional):
+
+Review Logs:
+Look into application logs to verify that attempts to upload executable files are logged and flagged appropriately.
+Ensure there are necessary security warnings or errors related to the rejected files.
+___________________________________________________________________________________________________
+
+| 12  | **API Security** | Verify the security of API endpoints. | **Example:** Test API endpoints for proper authentication and authorization by accessing them with and without valid tokens and ensuring appropriate responses. |'
+
+Testing API Endpoints
+Objective: Verify that API endpoints require proper authentication and authorization, and respond appropriately based on token validity.
+
+Steps to Perform:
+
+Identify API Endpoints:
+
+Gather the list of API endpoints that need to be tested (e.g., /api/user/profile, /api/admin/settings).
+Set Up Authentication:
+
+Valid Token: Obtain or generate a valid authentication token (e.g., JWT) using the appropriate authentication mechanism.
+Invalid Token: Prepare an invalid token or simulate an expired token.
+
+
+
+
+
+Test Access with Valid Token:
+
+Make Request: Use a tool like Postman, cURL, or a similar HTTP client to send a request to the API endpoint with the valid token in the Authorization header.
+Example Request:
+###############
+GET /api/user/profile
+Authorization: Bearer [VALID_TOKEN]
+Verify Response:
+Expected Result: The API should return a successful response (e.g., HTTP 200 OK) with the requested data.
+Check Data: Ensure that the data returned is correct and matches the expected output.
+
+
+
+
+Test Access with Invalid Token:
+
+Make Request: Send a request to the same API endpoint using an invalid or expired token.
+Example Request:
+######################
+GET /api/user/profile
+Authorization: Bearer [INVALID_TOKEN]
+
+
+Verify Response:
+Expected Result: The API should return an unauthorized response (e.g., HTTP 401 Unauthorized) or a forbidden response (e.g., HTTP 403 Forbidden).
+Check Error Message: Ensure the error message indicates an issue with authentication or authorization.
+Test Access Without Token:
+
+
+
+Make Request: Send a request to the API endpoint without including the Authorization header.
+Example Request:
+#################
+GET /api/user/profile
+
+Verify Response:
+Expected Result: The API should return an unauthorized response (e.g., HTTP 401 Unauthorized) if authentication is required.
+Test Endpoint Authorization:
+
+Role-Based Testing: For endpoints that require specific roles (e.g., admin), test access with different roles.
+Example Request with Admin Token:
+##################
+GET /api/admin/settings
+Authorization: Bearer [ADMIN_TOKEN]
+
+Verify Response:
+Expected Result: Admin users should have access to admin endpoints (e.g., HTTP 200 OK).
+Expected Result for Regular Users: Regular users should be denied access (e.g., HTTP 403 Forbidden).
+Check Token Expiry Handling:
+
+Simulate Expired Token: Attempt to access the API endpoint with a token that has expired.
+Example Request:
+
+###########################
+GET /api/user/profile
+Authorization: Bearer [EXPIRED_TOKEN]
+
+Verify Response:
+Expected Result: The API should return an unauthorized response (e.g., HTTP 401 Unauthorized) indicating that the token is expired.
+
+-------------------------------------------------------------------------------------------------
+
+
+| 13  | **Sensitive Data Exposure** | Ensure that sensitive information is not exposed in logs or error messages. | **Example:** Check application logs for sensitive data (e.g., passwords, credit card numbers) and ensure they are not stored or displayed. |
+
+To ensure that sensitive data is not stored or displayed in application logs, follow these steps:
+
+Access Application Logs:
+
+Locally: Check the application logs on your server or development environment.
+Remotely: Use log management tools or services if your logs are stored externally (e.g., CloudWatch, Splunk).
+Identify Sensitive Data Types:
+
+Determine what constitutes sensitive data in your application (e.g., passwords, credit card numbers, personal information).
+Search Logs for Sensitive Data:
+
+Manual Search: Open the log files or log viewer and manually search for sensitive data. Look for keywords or patterns (e.g., password, credit card, ****).
+Automated Tools: Use log analysis tools to search for patterns associated with sensitive data.
+Check for Unintended Exposure:
+
+Look for logs that include sensitive data, especially in error messages, stack traces, or user activity logs.
+Verify Data Masking or Redaction:
+
+Ensure that any sensitive data in the logs is masked or redacted (e.g., displaying only the last four digits of a credit card number).
+Review Log Configuration:
+
+Check your application’s logging configuration to ensure sensitive data is not logged. Look for settings or filters that might accidentally expose sensitive information.
+Perform a Test Log Generation:
+
+Create Test Data: Simulate scenarios where sensitive data is generated (e.g., user login attempts with incorrect passwords).
+Check Logs: Review the generated logs to confirm that sensitive information is not recorded.
+Check Compliance with Policies:
+
+Verify that your logging practices align with your organization’s data protection policies and regulatory requirements.
+
+
+
+-----------------------------------------------------------
+
+
+| 14  | **Security Headers** | Verify that appropriate security headers are present. | **Example:** Use a browser developer tool or online scanner to check for headers like `Content-Security-Policy`, `Strict-Transport-Security`, and `X-Frame-Options` and ensure they are configured properly. |
+To quickly check for security headers like Content-Security-Policy, Strict-Transport-Security, and X-Frame-Options, follow these steps:
+
+Open Developer Tools:
+
+In your browser (e.g., Chrome, Firefox), open Developer Tools by pressing F12 or right-clicking on the page and selecting "Inspect."
+Go to the Network Tab:
+
+Navigate to the "Network" tab in Developer Tools.
+Refresh the Page:
+
+Reload the page to capture the HTTP headers.
+Select a Network Request:
+
+Click on the main request (usually the first item) to view its details.
+Check Headers:
+
+Go to the "Headers" section to see the HTTP response headers.
+Look for headers like Content-Security-Policy, Strict-Transport-Security, and X-Frame-Options.
+Verify Configuration:
+
+Content-Security-Policy: Ensure it has a policy defined that specifies allowed sources for content (e.g., default-src 'self';).
+Strict-Transport-Security: Ensure it is set to enforce HTTPS (e.g., max-age=31536000; includeSubDomains).
+X-Frame-Options: Ensure it is set to prevent clickjacking (e.g., DENY or SAMEORIGIN).
+
+
+
+-----------------------------------------------------------------------------------------------
+
+
+| 15  | **User Permissions** | Test for proper enforcement of user permissions. | **Example:** Attempt to perform actions or access data that should be restricted based on user roles and verify that permissions are enforced correctly. | Attempt to access the admin dashboard (e.g., https://example.com/admin)while you are a regular user
+
+---
+
+### Detailed Manual Examples
+
+1. **Authentication Vulnerabilities**
+   - **Objective:** Identify if the application is susceptible to SQL injection.
+   - **Steps:**
+     1. Navigate to the login page.
+     2. Enter a payload like `admin' OR '1'='1` in the username or password field.
+     3. Click the login button.
+     4. Check if you gain unauthorized access or receive an error indicating a potential vulnerability.
+
+2. **Password Strength Requirements**
+   - **Objective:** Ensure that the application enforces strong password policies.
+   - **Steps:**
+     1. Go to the account creation or password change page.
+     2. Enter a weak password such as `abc123`.
+     3. Submit the form.
+     4. Verify that an error message is displayed indicating that the password does not meet complexity requirements.
+
+3. **Brute Force Protection**
+   - **Objective:** Test if the application prevents brute force attacks.
+   - **Steps:**
+     1. Attempt multiple failed login attempts rapidly using incorrect passwords.
+     2. Observe the system’s response, such as account lockout or CAPTCHA prompt.
+     3. Confirm that the system takes action to prevent further attempts.
+
+4. **Session Management**
+   - **Objective:** Verify secure session handling.
+   - **Steps:**
+     1. Log in to the application.
+     2. Use a tool or script to capture your session token.
+     3. Try to use the captured token to access the application from a different browser or session.
+     4. Ensure that access is denied and sessions are properly managed.
+
+5. **Data Encryption**
+   - **Objective:** Ensure data is encrypted during transmission.
+   - **Steps:**
+     1. Use a network analyzer like Wireshark to capture traffic between the client and server.
+     2. Look for sensitive data being transmitted.
+     3. Verify that all sensitive information is encrypted and not visible in plaintext.
+
+6. **Access Control**
+   - **Objective:** Ensure proper access restrictions.
+   - **Steps:**
+     1. Log in with a regular user account.
+     2. Try to access admin-only sections of the site or perform admin actions.
+     3. Verify that access is denied and proper authorization is enforced.
+
+7. **Cross-Site Scripting (XSS)**
+   - **Objective:** Identify if the application is vulnerable to XSS attacks.
+   - **Steps:**
+     1. Insert a script payload like `<script>alert('XSS')</script>` into input fields or URL parameters.
+     2. Submit the data and observe if the script executes.
+     3. Ensure that the input is sanitized and the script does not run.
+
+8. **Cross-Site Request Forgery (CSRF)**
+   - **Objective:** Test for CSRF protection.
+   - **Steps:**
+     1. Create a form on an external site that submits a request to the target application.
+     2. Attempt to perform actions on the target application using this form.
+     3. Verify that the application blocks such unauthorized requests.
+
+9. **Error Handling**
+   - **Objective:** Ensure sensitive information is not exposed in error messages.
+   - **Steps:**
+     1. Trigger an error condition (e.g., malformed query).
+     2. Observe the error message displayed.
+     3. Verify that no sensitive information or stack traces are revealed.
+
+10. **Clickjacking**
+    - **Objective:** Check for clickjacking vulnerabilities.
+    - **Steps:**
+      1. Embed the application page in an iframe on a separate site.
+      2. Attempt to interact with the embedded page.
+      3. Ensure that the application is protected against clickjacking (e.g., with `X-Frame-Options` header).
+
+11. **File Upload Security**
+    - **Objective:** Test file upload security.
+    - **Steps:**
+      1. Attempt to upload a file with an executable extension (e.g., `.php`).
+      2. Verify that the upload is blocked and the file cannot be executed.
+
+12. **API Security**
+    - **Objective:** Verify API endpoint security.
+    - **Steps:**
+      1. Access an API endpoint without proper authentication.
+      2. Ensure that access is denied and the API requires valid tokens.
+      3. Test endpoints with valid tokens and verify that only authorized actions are permitted.
+
+13. **Sensitive Data Exposure**
+    - **Objective:** Ensure sensitive data is not exposed in logs.
+    - **Steps:**
+      1. Check application logs for sensitive data entries (e.g., passwords, credit card info).
+      2. Ensure that such data is not stored or displayed.
+
+14. **Security Headers**
+    - **Objective:** Verify the presence of security headers.
+    - **Steps:**
+      1. Use developer tools or online scanners to check for security headers.
+      2. Verify headers such as `Content-Security-Policy`, `Strict-Transport-Security`, and `X-Frame-Options`.
+
+15. **User Permissions**
+    - **Objective:** Test for correct permission enforcement.
+    - **Steps:**
+      1. Attempt actions or access resources that should be restricted based on user roles.
+      2. Verify that the system enforces permissions correctly and prevents unauthorized actions.
